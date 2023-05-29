@@ -1,3 +1,4 @@
+import streamlit as st
 import pandas as pd
 import seaborn as sns
 from scipy.spatial.distance import squareform
@@ -203,6 +204,46 @@ def AHP_Consolidated(A, rggm, w=1):
 
 arr = [1, 1, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 6, 6, 3, 6, 3, 3, 1, 3, 1, 1, 3, 1, 1, 1, 1, 3, 3, 1, 0.333, 1, 1, 1, 1, 1, 0.333, 1, 0.333, 0.333, 1, 1, 1, 3]
 A1, weights, cr, rgmm1 = AHP_1_Participant(arr)
+
+# def main():
+#     # Set the app title and sidebar options
+#     st.title("Analytic Hierarchy Process (AHP) App")
+#     st.sidebar.title("Configuration")
+
+#     # Get user input for goal, criteria, and alternatives
+#     goal = st.sidebar.text_input("Goal")
+#     criteria = st.sidebar.text_input("Criteria (comma-separated)")
+#     alternatives = st.sidebar.text_input("Alternatives (comma-separated)")
+
+#     # Process the user input
+#     criteria_list = [c.strip() for c in criteria.split(",")]
+#     alternatives_list = [a.strip() for a in alternatives.split(",")]
+
+#     # Display the input summary
+#     st.sidebar.subheader("Input Summary")
+#     st.sidebar.write("Goal:", goal)
+#     st.sidebar.write("Criteria:", criteria_list)
+#     st.sidebar.write("Alternatives:", alternatives_list)
+
+#     # Perform AHP calculations when the user clicks a button
+#     if st.sidebar.button("Run AHP"):
+#         # Perform AHP calculations here
+#         # ...
+
+#         # Display the results
+#         st.subheader("Results")
+#         # Display the A matrix heatmap
+#         st.pyplot(plt.figure(figsize=(10, 8)))
+#         sns.heatmap(A, annot=True, fmt=".2f", cmap="Blues", xticklabels=criteria_list, yticklabels=criteria_list)
+#         st.pyplot(plt)
+
+#         # Display other results as desired
+#         # ...
+
+
+# if __name__ == "__main__":
+#     main()
+
 # Example usage:
 # A = [np.array([[1, 1/2, 3], [2, 1, 5], [1/3, 1/5, 1]]),
 #      np.array([[1, 2, 3], [1/2, 1, 2], [1/3, 1/2, 1]]),
