@@ -201,13 +201,15 @@ def AHP_Consolidated(A, rggm, w=1):
     print('Consensus value: {:.2%}'.format(consensus))
     return cons_exp, p, cr
 
+arr = [1, 1, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 6, 6, 3, 6, 3, 3, 1, 3, 1, 1, 3, 1, 1, 1, 1, 3, 3, 1, 0.333, 1, 1, 1, 1, 1, 0.333, 1, 0.333, 0.333, 1, 1, 1, 3]
+A1, weights, cr, rgmm1 = AHP_1_Participant(arr)
 # Example usage:
-A = [np.array([[1, 1/2, 3], [2, 1, 5], [1/3, 1/5, 1]]),
-     np.array([[1, 2, 3], [1/2, 1, 2], [1/3, 1/2, 1]]),
-     np.array([[1, 1/3, 1/4], [3, 1, 1/2], [4, 2, 1]])]
+# A = [np.array([[1, 1/2, 3], [2, 1, 5], [1/3, 1/5, 1]]),
+#      np.array([[1, 2, 3], [1/2, 1, 2], [1/3, 1/2, 1]]),
+#      np.array([[1, 1/3, 1/4], [3, 1, 1/2], [4, 2, 1]])]
 
-rggm = [np.array([0.3, 0.5, 0.2]),
-        np.array([0.2, 0.4, 0.4]),
-        np.array([0.4, 0.3, 0.3])]
+# rggm = [np.array([0.3, 0.5, 0.2]),
+#         np.array([0.2, 0.4, 0.4]),
+#         np.array([0.4, 0.3, 0.3])]
 
-AHP_Consolidated(A, rggm)
+# AHP_Consolidated(A, rggm)
