@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import normalize
 from IPython.display import display
+import streamlit as st
 
 def calculate_priorities(features, total_point):
     
@@ -40,26 +41,59 @@ def calculate_priorities(features, total_point):
     
     return dict(zip(features[0],points))
 
-critetia = [['Experience','Education','Charisma','Age'],[4,3,7]]
-total_point = 1
-main_dict = calculate_priorities(critetia, total_point)
+# critetia = [['Experience','Education','Charisma','Age'],[4,3,7]]
+# total_point = 1
+# main_dict = calculate_priorities(critetia, total_point)
 
-experience_feature = [['Dict','Tom','Harry'],[4,9]]
-experience_dict = calculate_priorities(experience_feature, main_dict['Experience'])
+# experience_feature = [['Dict','Tom','Harry'],[4,9]]
+# experience_dict = calculate_priorities(experience_feature, main_dict['Experience'])
 
-education_feature = [['Harry','Tom','Dict'],[5,7]]
-education_dict = calculate_priorities(education_feature, main_dict['Education'])
+# education_feature = [['Harry','Tom','Dict'],[5,7]]
+# education_dict = calculate_priorities(education_feature, main_dict['Education'])
 
-charisma_feature = [['Tom','Dict','Harry'],[5,9]]
-charisma_dict = calculate_priorities(charisma_feature, main_dict['Charisma'])
+# charisma_feature = [['Tom','Dict','Harry'],[5,9]]
+# charisma_dict = calculate_priorities(charisma_feature, main_dict['Charisma'])
 
-age_feature = [['Dict','Tom','Harry'],[3,9]]
-age_dict = calculate_priorities(age_feature, main_dict['Age'])
+# age_feature = [['Dict','Tom','Harry'],[3,9]]
+# age_dict = calculate_priorities(age_feature, main_dict['Age'])
 
-df = pd.DataFrame([experience_dict, education_dict, charisma_dict, age_dict])
-df.index = main_dict.keys()
-total = df.sum()
-total.name = 'Total'
-df = pd.concat([df,total.to_frame().T])
-df
-display(df)
+# df = pd.DataFrame([experience_dict, education_dict, charisma_dict, age_dict])
+# df.index = main_dict.keys()
+# total = df.sum()
+# total.name = 'Total'
+# df = pd.concat([df,total.to_frame().T])
+# df
+# display(df)
+
+def main():
+    st.title("AHP Priorities")
+
+    critetia = [['Experience','Education','Charisma','Age'],[4,3,7]]
+    total_point = 1
+    main_dict = calculate_priorities(critetia, total_point)
+
+    experience_feature = [['Dict','Tom','Harry'],[4,9]]
+    experience_dict = calculate_priorities(experience_feature, main_dict['Experience'])
+
+    education_feature = [['Harry','Tom','Dict'],[5,7]]
+    education_dict = calculate_priorities(education_feature, main_dict['Education'])
+
+    charisma_feature = [['Tom','Dict','Harry'],[5,9]]
+    charisma_dict = calculate_priorities(charisma_feature, main_dict['Charisma'])
+
+    age_feature = [['Dict','Tom','Harry'],[3,9]]
+    age_dict = calculate_priorities(age_feature, main_dict['Age'])
+
+    df = pd.DataFrame([experience_dict, education_dict, charisma_dict, age_dict])
+    df.index = main_dict.keys()
+    total = df.sum()
+    total.name = 'Total'
+    df = pd.concat([df,total.to_frame().T])
+
+    # Display the DataFrame in the Streamlit app
+    st.write(df)
+
+# Run the main function
+if __name__ == '__main__':
+    main()
+
