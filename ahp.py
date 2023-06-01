@@ -90,20 +90,6 @@ def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
 
 def main():
     st.set_page_config(page_title="AHP Calculator", page_icon=":bar_chart:")
-    user_input = welcome_page()
-
-    if user_input:
-        cri = st.sidebar.text_input("Enter Criteria")
-        alt = st.sidebar.text_input("Enter Alternatives")
-
-        st.sidebar.info("Enter multiple values of Criteria & Alternatives, separated by comma without any spaces.")
-        st.sidebar.info("Example: Car,Bus,Truck")
-    if 'cri' not in st.session_state or 'alt' not in st.session_state:
-        welcome_page()
-    else:
-        cri = st.session_state['cri']
-        alt = st.session_state['alt']
-        calculate_ahp(cri, alt)
     st.header("AHP Calculator")
     # st.write("Bla bla bla .... contentttt about AHP and mcdm")
 
