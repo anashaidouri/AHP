@@ -92,84 +92,96 @@ def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
 
 def main():
     st.set_page_config(page_title="AHP Calculator", page_icon=":bar_chart:")
+
+    # hide default streamlit page style
+    hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+    st.markdown(hide_st_style, unsafe_allow_html=True)
+
     # --- NAVIGATION MENU ---
     selected = option_menu(
         menu_title=None,
-        options=["AHP Calculator", "Dashboard"],
-        icons=["pencil-fill", "bar-chart-fill"], 
+        options=["AHP-Calculator", "Dashboard"],
+        icons=["calculator-fill", "bar-chart-fill"], 
         orientation="horizontal",
     )
-    st.header("AHP Calculator")
-    st.title("Goal")
-    goal = st.text_input("Enter Goal")
+    if selected == "AHP-Calculator":
+        st.header("AHP Calculator")
+        st.title("Goal")
+        goal = st.text_input("Enter Goal")
 
-    subcriteria_dict = {}
+        subcriteria_dict = {}
 
-    st.title("Criteria & Alternatives")
-    cri = st.text_input("Enter Criteria")
-    criterias = cri.split(",")
-    st.info("Enter multiple values of Criteria, separated by comma without any spaces.")
-    st.info("Example: cri1, cri2, cri3...")
+        st.title("Criteria & Alternatives")
+        cri = st.text_input("Enter Criteria")
+        criterias = cri.split(",")
 
-    # Add subcriteria for each criterion
-    for criterion in criterias:
-        subcriteria = st.text_input(f"Enter Subcriteria for {criterion}")
-        st.info("Enter multiple values of Subcriteria, separated by comma without any spaces.")
-        subcriteria_list = subcriteria.split(",")
-        subcriteria_dict[criterion] = subcriteria_list
+        # Add subcriteria for each criterion
+        for criterion in criterias:
+            subcriteria = st.text_input(f"Enter Subcriteria for {criterion}")
+            subcriteria_list = subcriteria.split(",")
+            subcriteria_dict[criterion] = subcriteria_list
 
-    alt = st.text_input("Enter Alternatives")
-    alternatives = alt.split(",")
-    st.info("Enter multiple values of Alternatives, separated by comma without any spaces.")
-    st.info("Example: alt1, alt2, alt3...")
-    if cri and alt:
-        with st.expander("Criteria Weights"):
-            st.subheader("Pairwise comparision for Criteria")
-            st.write("---")
-            n = len(criterias)
-            A = np.zeros((n, n))
-            Aradio = np.zeros((n,n))
-            for i in range(0, n):
-                for j in range(i, n):
-                    if i == j:
-                        A[i][j] = 1
-                    else:
-                        st.markdown(" ##### Criterion " + criterias[i] + " comparison with Criterion " + criterias[j])
-                        criteriaradio = st.radio("Select higher priority criterion ", (criterias[i], criterias[j],), horizontal=True)
-                        if criteriaradio == criterias[i]:
-                            A[i][j] = st.slider(label="How much higher " + criterias[i] + " is in comparison with " + criterias[j] + "?", min_value=1, max_value=9, value=1)
-                            A[j][i] = float(1/A[i][j])
-                        else:
-                            A[j][i] = st.slider(label="How much higher " + criterias[j] + " is in comparison with " + criterias[i] + "?", min_value=1, max_value=9, value=1)
-                            A[i][j] = float(1/A[j][i])
-                
-        with st.expander("Alternative Weights"):
-            st.subheader("Pairwise comparision for Alternatives")
-            m = len(alternatives)
-            B = np.zeros((n, m, m))
-
-            for k in range(0, n):
+        alt = st.text_input("Enter Alternatives")
+        alternatives = alt.split(",")
+        st.info("Enter multiple values of fields, separated by comma without any spaces.")
+        st.info("Example: first_value, second_value, ...")
+        
+        if cri and alt and subcriteria:
+            with st.expander("Criteria Weights"):
+                st.subheader("Pairwise comparision for Criteria")
                 st.write("---")
-                st.markdown(" ##### Alternative comparison for Criterion " + criterias[k])
-                for i in range(0, m):
-                    for j in range(i, m):
+                n = len(criterias)
+                A = np.zeros((n, n))
+                Aradio = np.zeros((n,n))
+                for i in range(0, n):
+                    for j in range(i, n):
                         if i == j:
-                            B[k][i][j] = 1
+                            A[i][j] = 1
                         else:
-                            alternativeradio = st.radio("Select higher priority alternative for criteria " + criterias[k], (alternatives[i], alternatives[j],), horizontal=True)
-                            if alternativeradio == alternatives[i]:
-                                B[k][i][j] = st.slider("Considering Criterion " + criterias[k] + ", how much higher " + alternatives[i] + " is in comparison with " + alternatives[j] + "?", 1, 9, 1)
-                                B[k][j][i] = float(1/B[k][i][j])
+                            st.markdown(" ##### Criterion " + criterias[i] + " comparison with Criterion " + criterias[j])
+                            criteriaradio = st.radio("Select higher priority criterion ", (criterias[i], criterias[j],), horizontal=True)
+                            if criteriaradio == criterias[i]:
+                                A[i][j] = st.slider(label="How much higher " + criterias[i] + " is in comparison with " + criterias[j] + "?", min_value=1, max_value=9, value=1)
+                                A[j][i] = float(1/A[i][j])
                             else:
-                                B[k][j][i] = st.slider("Considering Criterion " + criterias[k] + ", how much higher " + alternatives[j] + " is in comparison with " + alternatives[i] + "?", 1, 9, 1)
-                                B[k][i][j] = float(1/B[k][j][i])
+                                A[j][i] = st.slider(label="How much higher " + criterias[j] + " is in comparison with " + criterias[i] + "?", min_value=1, max_value=9, value=1)
+                                A[i][j] = float(1/A[j][i])
+                    
+            with st.expander("Alternative Weights"):
+                st.subheader("Pairwise comparision for Alternatives")
+                m = len(alternatives)
+                B = np.zeros((n, m, m))
+
+                for k in range(0, n):
+                    st.write("---")
+                    st.markdown(" ##### Alternative comparison for Criterion " + criterias[k])
+                    for i in range(0, m):
+                        for j in range(i, m):
+                            if i == j:
+                                B[k][i][j] = 1
+                            else:
+                                alternativeradio = st.radio("Select higher priority alternative for criteria " + criterias[k], (alternatives[i], alternatives[j],), horizontal=True)
+                                if alternativeradio == alternatives[i]:
+                                    B[k][i][j] = st.slider("Considering Criterion " + criterias[k] + ", how much higher " + alternatives[i] + " is in comparison with " + alternatives[j] + "?", 1, 9, 1)
+                                    B[k][j][i] = float(1/B[k][i][j])
+                                else:
+                                    B[k][j][i] = st.slider("Considering Criterion " + criterias[k] + ", how much higher " + alternatives[j] + " is in comparison with " + alternatives[i] + "?", 1, 9, 1)
+                                    B[k][i][j] = float(1/B[k][j][i])
 
 
-                
-        btn = st.button("Calculate AHP")
-        st.write("##")
-        if btn:
-            calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict)
+                    
+            btn = st.button("Calculate AHP")
+            st.write("##")
+            if btn:
+                calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict)
+    if selected == "Dashboard":
+        st.write("dashboard")
 
 
 
