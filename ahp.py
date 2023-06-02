@@ -87,7 +87,6 @@ def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
     st.pyplot(plot_graph(W2, criterias, "Criteria", "Weights of Criteria"))
 
     st.pyplot(plot_graph(W, alternatives, "Alternatives", "Optimal Alternative for given Criteria"))
-    st.balloons()
 
 
 def main():
