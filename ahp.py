@@ -105,8 +105,8 @@ def main():
     # --- NAVIGATION MENU ---
     selected = option_menu(
         menu_title=None,
-        options=["AHP-Calculator", "Dashboard"],
-        icons=["calculator-fill", "bar-chart-fill"], 
+        options=["AHP-Calculator", "Data Visualisation", "Dashboard"],
+        icons=["calculator-fill", "bar-chart-fill", "graph-up"], 
         orientation="horizontal",
     )
     if selected == "AHP-Calculator":
