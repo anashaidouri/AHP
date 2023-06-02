@@ -2,6 +2,8 @@ import streamlit as st  #For build and share web apps
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt #For graphical comparison and analysis
+from streamlit_option_menu import option_menu
+
 
 
 @st.cache_data
@@ -90,25 +92,32 @@ def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
 
 def main():
     st.set_page_config(page_title="AHP Calculator", page_icon=":bar_chart:")
+    # --- NAVIGATION MENU ---
+    selected = option_menu(
+        menu_title=None,
+        options=["AHP Calculator", "Dashboard"],
+        icons=["calculator-fill", "pencil-square"], 
+        orientation="horizontal",
+    )
     st.header("AHP Calculator")
     # st.write("Bla bla bla .... contentttt about AHP and mcdm")
 
     subcriteria_dict = {}
 
-    st.sidebar.title("Criteria & Alternatives")
-    cri = st.sidebar.text_input("Enter Criteria")
+    st.title("Criteria & Alternatives")
+    cri = st.text_input("Enter Criteria")
     criterias = cri.split(",")
 
     # Add subcriteria for each criterion
     for criterion in criterias:
-        subcriteria = st.sidebar.text_input(f"Enter Subcriteria for {criterion}")
+        subcriteria = st.text_input(f"Enter Subcriteria for {criterion}")
         subcriteria_list = subcriteria.split(",")
         subcriteria_dict[criterion] = subcriteria_list
 
-    alt = st.sidebar.text_input("Enter Alternatives")
+    alt = st.text_input("Enter Alternatives")
     alternatives = alt.split(",")
-    st.sidebar.info("Enter multiple values of Criteria & Alternatives, separated by comma without any spaces.")
-    st.sidebar.info("Example: Car,Bus,Truck")
+    st.info("Enter multiple values of Criteria & Alternatives, separated by comma without any spaces.")
+    st.info("Example: Car,Bus,Truck")
     if cri and alt:
         with st.expander("Criteria Weights"):
             st.subheader("Pairwise comparision for Criteria")
