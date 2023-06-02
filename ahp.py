@@ -61,7 +61,7 @@ def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
     # print("A : ")
     # print(str(A))
     dfA = pd.DataFrame(A)
-    # Use tabel instead of dataframe because dataframe are interactable
+    # Use table instead of dataframe because dataframe are interactable
     st.markdown(" #### Criteria Table")
     st.table(dfA)
     for k in range(0, n):
