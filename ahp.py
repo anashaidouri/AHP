@@ -96,28 +96,32 @@ def main():
     selected = option_menu(
         menu_title=None,
         options=["AHP Calculator", "Dashboard"],
-        icons=["calculator-fill", "pencil-square"], 
+        icons=["pencil-fill", "bar-chart-fill"], 
         orientation="horizontal",
     )
     st.header("AHP Calculator")
-    # st.write("Bla bla bla .... contentttt about AHP and mcdm")
+    st.title("Goal")
+    goal = st.text_input("Enter Goal")
 
     subcriteria_dict = {}
 
     st.title("Criteria & Alternatives")
     cri = st.text_input("Enter Criteria")
     criterias = cri.split(",")
+    st.info("Enter multiple values of Criteria, separated by comma without any spaces.")
+    st.info("Example: cri1, cri2, cri3...")
 
     # Add subcriteria for each criterion
     for criterion in criterias:
         subcriteria = st.text_input(f"Enter Subcriteria for {criterion}")
+        st.info("Enter multiple values of Subcriteria, separated by comma without any spaces.")
         subcriteria_list = subcriteria.split(",")
         subcriteria_dict[criterion] = subcriteria_list
 
     alt = st.text_input("Enter Alternatives")
     alternatives = alt.split(",")
-    st.info("Enter multiple values of Criteria & Alternatives, separated by comma without any spaces.")
-    st.info("Example: Car,Bus,Truck")
+    st.info("Enter multiple values of Alternatives, separated by comma without any spaces.")
+    st.info("Example: alt1, alt2, alt3...")
     if cri and alt:
         with st.expander("Criteria Weights"):
             st.subheader("Pairwise comparision for Criteria")
