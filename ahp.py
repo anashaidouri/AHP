@@ -138,8 +138,7 @@ def main():
 
 
         if cri and alt and subcriteria:
-
-        # expander for pairwise comparison for criteria
+            # expander for pairwise comparison for criteria
             with st.expander("Criteria Weights"):
                 st.subheader("Pairwise comparision for Criteria")
                 st.write("---")
@@ -161,7 +160,28 @@ def main():
                                 A[i][j] = float(1/A[j][i])
 
             # add expander for pairwise comparison for subcriteria
-            # to do later
+            with st.expander("Subcriteria Weights"):
+                st.subheader("Pairwise comparison for Subcriteria")
+                p = len(subcriteria)
+                C = np.zeros((n, p, p))
+
+                subcriteria_options = [c.strip() for c in subcriteria.split(",")]
+
+                for i in range(n):
+                    st.write("---")
+                    st.markdown(f"##### Subcriteria comparison for Criterion {criterias[i]}")
+                    for j, option1 in enumerate(subcriteria_options):
+                        for k, option2 in enumerate(subcriteria_options):
+                            if j == k:
+                                C[i][j][k] = 1
+                            else:
+                                subcriteriaradio = st.radio(f"Select higher priority subcriterion for criterion {criterias[i]}", (option1, option2,), horizontal=True)
+                                if subcriteriaradio == option1:
+                                    C[i][j][k] = st.slider(f"Considering criterion {criterias[i]}, how much higher {option1} is in comparison with {option2}?", 1, 9, 1)
+                                    C[i][k][j] = float(1/C[i][j][k])
+                                else:
+                                    C[i][k][j] = st.slider(f"Considering criterion {criterias[i]}, how much higher {option2} is in comparison with {option1}?", 1, 9, 1)
+                                    C[i][j][k] = float(1/C[i][k][j])
 
             # expander for pairwise comparison for alternatives        
             with st.expander("Alternative Weights"):
