@@ -73,6 +73,8 @@ def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
     # print("B : ")
     # print(str(B))
     st.write("---")
+    st.markdown("#### subcriteria table")
+    st.write("---")
     for i in range(0, n):
         dfB = pd.DataFrame(B[i])
         # Use tabel instead of dataframe because dataframe are interactable
@@ -89,6 +91,41 @@ def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
 
     st.pyplot(plot_graph(W, alternatives, "Alternatives", "Optimal Alternative for given Criteria"))
 
+# modify the show_matrix fuction accordingly to show visualisation of the results
+def show_matrix(A, B, n, m, criterias):
+    for i in range(0, n):
+        for j in range(i, n):
+            if i != j:
+                A[j][i] = float(1/A[i][j])
+    # print("A : ")
+    # print(str(A))
+    dfA = pd.DataFrame(A)
+    # Use table instead of dataframe because dataframe are interactable
+    st.markdown(" #### Criteria Table")
+    st.table(dfA)
+    for k in range(0, n):
+        for i in range(0, m):
+            for j in range(i, m):
+                if i != j:
+                    B[k][j][i] = float(1/B[k][i][j])
+    # print("B : ")
+    # print(str(B))
+    st.write("---")
+    for i in range(0, n):
+        dfB = pd.DataFrame(B[i])
+        # Use tabel instead of dataframe because dataframe are interactable
+        st.markdown(" #### Alternative Table for Criterion " + criterias[i])
+        st.table(dfB)
+    W2 = get_weight(A, "Criteria Table")
+    W3 = np.zeros((n, m))
+    for i in range(0, n):
+        w3 = get_weight(B[i], "Alternatives Table for Criterion "+ criterias[i])
+        W3[i] = w3
+    W = np.dot(W2, W3)
+    
+# modify the show_matrix fuction accordingly to show visualisation of the results
+def show_graph():
+    st.header("graphs")
 
 def main():
     st.set_page_config(page_title="AHP Calculator", page_icon=":bar_chart:")
@@ -212,11 +249,14 @@ def main():
                 calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict)
 
     if selected == "Visualisation":
-        st.header("click to show graph visualisation")
-        but = st.button("show graphs")
+        st.header("pairwise matrix")
+        but = st.button("show matrix")
         if but:
-            st.pyplot(plot_graph(W2, criterias, "Criteria", "Weights of Criteria"))
-            st.pyplot(plot_graph(W, alternatives, "Alternatives", "Optimal Alternative for given Criteria"))
+            show_matrix(A, B, n, m, criterias)
+        st.header("graph visualisation")
+        butt = st.button("show graph")
+        if butt:
+            show_graph()
 
     if selected == "Dashboard":
         st.header("previous decisions :")
