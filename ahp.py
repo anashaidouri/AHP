@@ -85,6 +85,7 @@ def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
     for i in range(0, n):
         w3 = get_weight(B[i], "Alternatives Table for Criterion "+ criterias[i])
         W3[i] = w3
+        st.pyplot(plot_graph(w3, subcriteria_dict[criterias[i]], "Subcriteria", "Weights of Subcriteria for Criterion " + criterias[i]))
     W = np.dot(W2, W3)
 
     st.pyplot(plot_graph(W2, criterias, "Criteria", "Weights of Criteria"))
