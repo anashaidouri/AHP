@@ -229,7 +229,21 @@ def main():
                                 A[i][j] = float(1/A[j][i])
 
             # add expander for pairwise comparison for subcriteria
-                                    
+            with st.expander("Subcriteria Weights"):
+                for criterion in criterias:
+                    st.subheader(f"Pairwise comparison for Subcriteria of {criterion}")
+                    subcriteria_weights = np.zeros((len(subcriteria_dict[criterion]), len(subcriteria_dict[criterion])))
+
+                    for i in range(len(subcriteria_dict[criterion])):
+                        for j in range(i, len(subcriteria_dict[criterion])):
+                            if i == j:
+                                subcriteria_weights[i][j] = 1
+                            else:
+                                weight = st.slider(f"How much higher is {subcriteria_dict[criterion][i]} in comparison with {subcriteria_dict[criterion][j]}?", 1, 9, 1)
+                                subcriteria_weights[i][j] = weight
+                                subcriteria_weights[j][i] = 1 / weight
+
+                    st.table(pd.DataFrame(subcriteria_weights, index=subcriteria_dict[criterion], columns=subcriteria_dict[criterion]))                   
             # expander for pairwise comparison for alternatives        
             with st.expander("Alternative Weights"):
                 st.subheader("Pairwise comparision for Alternatives")
