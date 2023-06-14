@@ -9,7 +9,6 @@ from streamlit_option_menu import option_menu
 W2 = []
 W = []
 subcriteria_dict = {}
-@st.cache_data
 def get_weight(A, str):
     n = A.shape[0]
     e_vals, e_vecs = np.linalg.eig(A)
@@ -52,46 +51,78 @@ def welcome_page():
     if proceed_button:
         return user_input
 
-@st.cache_data
+
+# def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
+#     for i in range(0, n):
+#         for j in range(i, n):
+#             if i != j:
+#                 A[j][i] = float(1/A[i][j])
+#     # print("A : ")
+#     # print(str(A))
+#     dfA = pd.DataFrame(A)
+#     # Use table instead of dataframe because dataframe are interactable
+#     st.markdown(" #### Criteria Table")
+#     st.table(dfA)
+#     for k in range(0, n):
+#         for i in range(0, m):
+#             for j in range(i, m):
+#                 if i != j:
+#                     B[k][j][i] = float(1/B[k][i][j])
+#     # print("B : ")
+#     # print(str(B))
+#     st.write("---")
+#     st.markdown("#### subcriteria table")
+#     st.write("---")
+#     for i in range(0, n):
+#         dfB = pd.DataFrame(B[i])
+#         # Use tabel instead of dataframe because dataframe are interactable
+#         st.markdown(" #### Alternative Table for Criterion " + criterias[i])
+#         st.table(dfB)
+#     W2 = get_weight(A, "Criteria Table")
+#     W3 = np.zeros((n, m))
+#     for i in range(0, n):
+#         w3 = get_weight(B[i], "Alternatives Table for Criterion "+ criterias[i])
+#         W3[i] = w3
+#         st.pyplot(plot_graph(w3, subcriteria_dict[criterias[i]], "Subcriteria", "Weights of Subcriteria for Criterion " + criterias[i]))
+#     W = np.dot(W2, W3)
+
+#     st.pyplot(plot_graph(W2, criterias, "Criteria", "Weights of Criteria"))
+
+#     st.pyplot(plot_graph(W, alternatives, "Alternatives", "Optimal Alternative for given Criteria"))
+
 def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
-
-
     for i in range(0, n):
         for j in range(i, n):
             if i != j:
                 A[j][i] = float(1/A[i][j])
-    # print("A : ")
-    # print(str(A))
+
     dfA = pd.DataFrame(A)
-    # Use table instead of dataframe because dataframe are interactable
     st.markdown(" #### Criteria Table")
     st.table(dfA)
-    for k in range(0, n):
-        for i in range(0, m):
-            for j in range(i, m):
-                if i != j:
-                    B[k][j][i] = float(1/B[k][i][j])
-    # print("B : ")
-    # print(str(B))
-    st.write("---")
-    st.markdown("#### subcriteria table")
-    st.write("---")
-    for i in range(0, n):
-        dfB = pd.DataFrame(B[i])
-        # Use tabel instead of dataframe because dataframe are interactable
-        st.markdown(" #### Alternative Table for Criterion " + criterias[i])
-        st.table(dfB)
+
     W2 = get_weight(A, "Criteria Table")
     W3 = np.zeros((n, m))
+    
     for i in range(0, n):
-        w3 = get_weight(B[i], "Alternatives Table for Criterion "+ criterias[i])
+        for j in range(0, m):
+            for k in range(j, m):
+                if j != k:
+                    B[i][k][j] = float(1 / B[i][j][k])
+
+        dfB = pd.DataFrame(B[i])
+        st.markdown(" #### Alternative Table for Criterion " + criterias[i])
+        st.table(dfB)
+
+        w3 = get_weight(B[i], "Alternatives Table for Criterion " + criterias[i])
         W3[i] = w3
         st.pyplot(plot_graph(w3, subcriteria_dict[criterias[i]], "Subcriteria", "Weights of Subcriteria for Criterion " + criterias[i]))
+
     W = np.dot(W2, W3)
 
     st.pyplot(plot_graph(W2, criterias, "Criteria", "Weights of Criteria"))
 
     st.pyplot(plot_graph(W, alternatives, "Alternatives", "Optimal Alternative for given Criteria"))
+
 
 # modify the show_matrix fuction accordingly to show visualisation of the results
 def show_matrix(A, B, n, m, criterias):
@@ -200,28 +231,20 @@ def main():
 
             # add expander for pairwise comparison for subcriteria
             with st.expander("Subcriteria Weights"):
-                st.subheader("Pairwise comparison for Subcriteria")
-                p = len(subcriteria)
-                C = np.zeros((n, p, p))
+                for criterion in criterias:
+                    st.subheader(f"Pairwise comparison for Subcriteria of {criterion}")
+                    subcriteria_weights = np.zeros((len(subcriteria_dict[criterion]), len(subcriteria_dict[criterion])))
 
-                subcriteria_options = [c.strip() for c in subcriteria.split(",")]
-
-                for i in range(n):
-                    st.write("---")
-                    st.markdown(f"##### Subcriteria comparison for Criterion {criterias[i]}")
-                    for j, option1 in enumerate(subcriteria_options):
-                        for k, option2 in enumerate(subcriteria_options):
-                            if j == k:
-                                C[i][j][k] = 1
+                    for i in range(len(subcriteria_dict[criterion])):
+                        for j in range(i, len(subcriteria_dict[criterion])):
+                            if i == j:
+                                subcriteria_weights[i][j] = 1
                             else:
-                                subcriteriaradio = st.radio(f"Select higher priority subcriterion for criterion {criterias[i]}", (option1, option2,), horizontal=True)
-                                if subcriteriaradio == option1:
-                                    C[i][j][k] = st.slider(f"Considering criterion {criterias[i]}, how much higher {option1} is in comparison with {option2}?", 1, 9, 1)
-                                    C[i][k][j] = float(1/C[i][j][k])
-                                else:
-                                    C[i][k][j] = st.slider(f"Considering criterion {criterias[i]}, how much higher {option2} is in comparison with {option1}?", 1, 9, 1)
-                                    C[i][j][k] = float(1/C[i][k][j])
+                                weight = st.slider(f"How much higher is {subcriteria_dict[criterion][i]} in comparison with {subcriteria_dict[criterion][j]}?", 1, 9, 1)
+                                subcriteria_weights[i][j] = weight
+                                subcriteria_weights[j][i] = 1 / weight
 
+                    st.table(pd.DataFrame(subcriteria_weights, index=subcriteria_dict[criterion], columns=subcriteria_dict[criterion]))                   
             # expander for pairwise comparison for alternatives        
             with st.expander("Alternative Weights"):
                 st.subheader("Pairwise comparision for Alternatives")
