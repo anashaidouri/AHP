@@ -1,5 +1,4 @@
 import streamlit as st  #For building and sharing web apps
-# import mysql.connector
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt #For graphical comparison and analysis
@@ -125,36 +124,8 @@ def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
 
 
 # modify the show_matrix fuction accordingly to show visualisation of the results
-def show_matrix(A, B, n, m, criterias):
-    for i in range(0, n):
-        for j in range(i, n):
-            if i != j:
-                A[j][i] = float(1/A[i][j])
-    # print("A : ")
-    # print(str(A))
-    dfA = pd.DataFrame(A)
-    # Use table instead of dataframe because dataframe are interactable
-    st.markdown(" #### Criteria Table")
-    st.table(dfA)
-    for k in range(0, n):
-        for i in range(0, m):
-            for j in range(i, m):
-                if i != j:
-                    B[k][j][i] = float(1/B[k][i][j])
-    # print("B : ")
-    # print(str(B))
-    st.write("---")
-    for i in range(0, n):
-        dfB = pd.DataFrame(B[i])
-        # Use tabel instead of dataframe because dataframe are interactable
-        st.markdown(" #### Alternative Table for Criterion " + criterias[i])
-        st.table(dfB)
-    W2 = get_weight(A, "Criteria Table")
-    W3 = np.zeros((n, m))
-    for i in range(0, n):
-        w3 = get_weight(B[i], "Alternatives Table for Criterion "+ criterias[i])
-        W3[i] = w3
-    W = np.dot(W2, W3)
+def show_matrix():
+    st.header("show matrix")
     
 # modify the show_matrix fuction accordingly to show visualisation of the results
 def show_graph():
@@ -244,7 +215,7 @@ def main():
                                 subcriteria_weights[i][j] = weight
                                 subcriteria_weights[j][i] = 1 / weight
 
-                    st.table(pd.DataFrame(subcriteria_weights, index=subcriteria_dict[criterion], columns=subcriteria_dict[criterion]))                   
+                        st.table(pd.DataFrame(subcriteria_weights, index=subcriteria_dict[criterion], columns=subcriteria_dict[criterion]))                   
             # expander for pairwise comparison for alternatives        
             with st.expander("Alternative Weights"):
                 st.subheader("Pairwise comparision for Alternatives")
@@ -273,16 +244,18 @@ def main():
             if btn:
                 calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict)
 
+# result visualisation
     if selected == "Visualisation":
         st.header("pairwise matrix")
         but = st.button("show matrix")
         if but:
-            show_matrix(A, B, n, m, criterias)
+            show_matrix()
         st.header("graph visualisation")
         butt = st.button("show graph")
         if butt:
             show_graph()
 
+# dashboard
     if selected == "Dashboard":
         st.header("previous decisions :")
         with st.expander("buy a car"):
