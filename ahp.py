@@ -39,17 +39,6 @@ def plot_graph(x, y, ylabel, title):
     ax.set_ylabel("Values")
     return fig
 
-def welcome_page():
-    st.title("Welcome to AHP Calculator")
-    st.write("This app allows you to perform Analytic Hierarchy Process (AHP) calculations.")
-    st.write("Please enter the necessary information to proceed.")
-
-    user_input = st.text_input("Enter your goal:")
-    proceed_button = st.button("Proceed")
-
-    if proceed_button:
-        return user_input
-
 
 # def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
 #     for i in range(0, n):
