@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt #For graphical comparison and analysis
 from streamlit_option_menu import option_menu
-
+from crud import *
 
 W2 = []
 W = []
@@ -25,7 +25,6 @@ def get_weight(A, str):
     if cr >= 0.1:
         print("Failed Consistency check of "+str)
         st.error("Failed Consistency check of "+str)
-
     return w
 
 def plot_graph(x, y, ylabel, title):
@@ -39,44 +38,6 @@ def plot_graph(x, y, ylabel, title):
     ax.set_ylabel("Values")
     return fig
 
-
-# def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
-#     for i in range(0, n):
-#         for j in range(i, n):
-#             if i != j:
-#                 A[j][i] = float(1/A[i][j])
-#     # print("A : ")
-#     # print(str(A))
-#     dfA = pd.DataFrame(A)
-#     # Use table instead of dataframe because dataframe are interactable
-#     st.markdown(" #### Criteria Table")
-#     st.table(dfA)
-#     for k in range(0, n):
-#         for i in range(0, m):
-#             for j in range(i, m):
-#                 if i != j:
-#                     B[k][j][i] = float(1/B[k][i][j])
-#     # print("B : ")
-#     # print(str(B))
-#     st.write("---")
-#     st.markdown("#### subcriteria table")
-#     st.write("---")
-#     for i in range(0, n):
-#         dfB = pd.DataFrame(B[i])
-#         # Use tabel instead of dataframe because dataframe are interactable
-#         st.markdown(" #### Alternative Table for Criterion " + criterias[i])
-#         st.table(dfB)
-#     W2 = get_weight(A, "Criteria Table")
-#     W3 = np.zeros((n, m))
-#     for i in range(0, n):
-#         w3 = get_weight(B[i], "Alternatives Table for Criterion "+ criterias[i])
-#         W3[i] = w3
-#         st.pyplot(plot_graph(w3, subcriteria_dict[criterias[i]], "Subcriteria", "Weights of Subcriteria for Criterion " + criterias[i]))
-#     W = np.dot(W2, W3)
-
-#     st.pyplot(plot_graph(W2, criterias, "Criteria", "Weights of Criteria"))
-
-#     st.pyplot(plot_graph(W, alternatives, "Alternatives", "Optimal Alternative for given Criteria"))
 
 def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
     for i in range(0, n):
@@ -111,15 +72,6 @@ def calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict):
 
     st.pyplot(plot_graph(W, alternatives, "Alternatives", "Optimal Alternative for given Criteria"))
 
-
-# modify the show_matrix fuction accordingly to show visualisation of the results
-def show_matrix():
-    st.header("show matrix")
-    
-# modify the show_matrix fuction accordingly to show visualisation of the results
-def show_graph():
-    st.header("graphs")
-
 def main():
     st.set_page_config(page_title="AHP Calculator", page_icon=":bar_chart:")
 
@@ -136,8 +88,8 @@ def main():
     # --- NAVIGATION MENU ---
     selected = option_menu(
         menu_title=None,
-        options=["AHP-Calculator", "Visualisation", "Dashboard"],
-        icons=["calculator-fill", "bar-chart-fill", "pencil-fill"], 
+        options=["AHP-Calculator", "Dashboard"],
+        icons=["calculator-fill", "pencil-fill"], 
         orientation="horizontal",
     )
     n = 0 
@@ -165,8 +117,7 @@ def main():
         alternatives = alt.split(",")
         st.info("Enter multiple values of fields, separated by comma without any spaces.")
         st.info("Example: first_value, second_value, ...")
-
-
+        
         if cri and alt and subcriteria:
             # expander for pairwise comparison for criteria
             with st.expander("Criteria Weights"):
@@ -233,65 +184,40 @@ def main():
             if btn:
                 calculate_ahp(A, B, n, m, criterias, alternatives, subcriteria_dict)
 
-# result visualisation
-    if selected == "Visualisation":
-        st.header("pairwise matrix")
-        but = st.button("show matrix")
-        if but:
-            show_matrix()
-        st.header("graph visualisation")
-        butt = st.button("show graph")
-        if butt:
-            show_graph()
 
 # dashboard
     if selected == "Dashboard":
-        st.header("previous decisions :")
-        with st.expander("buy a car"):
-            st.subheader("modify or delete criteria")
-            st.write("confort")
-            button_col1, button_col2 = st.columns(2)
-            with button_col1:
-                st.button("edit comfort")
-            with button_col2:
-                st.button("delete confort")
-            st.write("finantials")
-            button_col3, button_col4 = st.columns(2)
-            with button_col3:
-                st.button("edit finantials")
-            with button_col4:
-                st.button("delete finantials")
-            st.write("company")
-            button_col5, button_col6 = st.columns(2)
-            with button_col5:
-                st.button("edit company")
-            with button_col6:
-                st.button("delete comapny")
-            st.subheader("modify or delete alternative")
-            st.write("mercedes")
-            button_col7, button_col8 = st.columns(2)
-            with button_col7:
-                st.button("edit mercedes")
-            with button_col8:
-                st.button("delete mercedes")
-            st.write("honda")
-            button_col9, button_col10 = st.columns(2)
-            with button_col9:
-                st.button("edit honda")
-            with button_col10:
-                st.button("delete honda")
-            st.write("BMW")
-            button_col11, button_col12 = st.columns(2)
-            with button_col11:
-                st.button("edit BMW")
-            with button_col12:
-                st.button("delete BMW")
-        button_col13, button_col14 = st.columns(2)
-        with button_col13:
-            st.button("edit result")
-        with button_col14:
-            st.button("delete resuslt")
-                
+        st.header("Previous Decisions:")
+        goals = all_goals()
+        for goal in goals:
+            goal_id = goal[0]
+            goal_name = goal[1]
+            with st.expander(goal_name):
+                st.subheader("Modify or Delete Criteria")
+                criteria_list = all_criteria(goal_id)
+                for criteria in criteria_list:
+                    criteria_id = criteria["criteria_id"]
+                    criteria_id = criteria[0]
+                    criteria_name = criteria[1]
+                    subcriteria_list = all_subcriteria(criteria_id)  # Updated call for subcriteria
+                    alternatives_list = all_alternatives(goal_id)  # Updated call for alternatives
+
+                    with st.expander(criteria_name):
+                        for subcriteria in subcriteria_list:
+                            st.write(subcriteria[1])
+                            st.button(f"Delete {subcriteria[1]}", key=f"delete_subcriteria_{subcriteria[0]}")
+
+                    st.subheader("Modify or Delete Alternatives")
+                    for alternative in alternatives_list:
+                        st.write(alternative[1])
+                        st.button(f"Delete {alternative[1]}", key=f"delete_alternative_{alternative[0]}")
+
+            button_col13, button_col14 = st.columns(2)
+            with button_col13:
+                st.button("Edit Goal", key=f"edit_goal_{goal_id}")
+            with button_col14:
+                st.button("Delete Result", key=f"delete_result_{goal_id}")
+               
         
 if __name__ == '__main__':
     main()
