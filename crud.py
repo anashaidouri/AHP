@@ -57,3 +57,19 @@ def all_criteria(goal_id):
         })
 
     return criteria_list
+
+def delete_goal(goal_id):
+    # Delete subcriteria
+    c.execute("DELETE FROM subcriteria WHERE c_ID IN (SELECT c_ID FROM criteria WHERE g_ID = %s)", (goal_id,))
+    
+    # Delete alternatives
+    c.execute("DELETE FROM alternative WHERE g_ID = %s", (goal_id,))
+    
+    # Delete criteria
+    c.execute("DELETE FROM criteria WHERE g_ID = %s", (goal_id,))
+    
+    # Delete goal
+    c.execute("DELETE FROM goal WHERE g_ID = %s", (goal_id,))
+    
+    # Commit the changes
+    conn.commit()
