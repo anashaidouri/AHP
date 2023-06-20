@@ -196,27 +196,27 @@ def main():
                 st.subheader("Modify or Delete Criteria")
                 criteria_list = all_criteria(goal_id)
                 for criteria in criteria_list:
-                    criteria_id = criteria["criteria_id"]
-                    criteria_id = criteria[0]
-                    criteria_name = criteria[1]
+                    criteria_id = criteria["criteria_id"]  # Update the key to match the correct field name
+                    criteria_name = criteria["criteria_name"]  # Update the key to match the correct field name
+                    st.write(criteria_name)
                     subcriteria_list = all_subcriteria(criteria_id)  # Updated call for subcriteria
                     alternatives_list = all_alternatives(goal_id)  # Updated call for alternatives
 
-                    with st.expander(criteria_name):
-                        for subcriteria in subcriteria_list:
-                            st.write(subcriteria[1])
-                            st.button(f"Delete {subcriteria[1]}", key=f"delete_subcriteria_{subcriteria[0]}")
+                    for subcriteria in subcriteria_list:
+                        st.write(subcriteria[1])
+                        st.button(f"Delete {subcriteria[1]}", key=f"delete_subcriteria_{subcriteria[0]}")
 
                     st.subheader("Modify or Delete Alternatives")
                     for alternative in alternatives_list:
                         st.write(alternative[1])
-                        st.button(f"Delete {alternative[1]}", key=f"delete_alternative_{alternative[0]}")
+                        st.button(f"Delete {alternative[1]}", key=f"delete_alternative_{criteria_id}_{alternative[0]}")
 
             button_col13, button_col14 = st.columns(2)
             with button_col13:
                 st.button("Edit Goal", key=f"edit_goal_{goal_id}")
             with button_col14:
                 st.button("Delete Result", key=f"delete_result_{goal_id}")
+
                
         
 if __name__ == '__main__':
